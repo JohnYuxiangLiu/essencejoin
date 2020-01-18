@@ -17,7 +17,8 @@ UserModel.findOne({
         console.log('no data')
     }else{
         // res.json(result)
-        res.redirect('/')
+        req.session.username=result.username
+        res.redirect('/user')
     }
 })
 }
