@@ -41,6 +41,9 @@ app.get('/', (req, res) => {
 app.get('/signin',(req,res)=>{
     res.sendFile(path.resolve(__dirname,'pages/signin.html'))
 })
+app.get('/user',(req,res)=>{
+    res.sendFile(path.resolve(__dirname,'pages/user.html'))
+})
 
 
 // post

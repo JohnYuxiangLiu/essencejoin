@@ -11,10 +11,12 @@ UserModel.findOne({
     ]
 }, (error, result) => {
     if(error){
+        res.redirect('/signin')
         return
     }
     if(!result){
         console.log('no data')
+        res.redirect('/signin')
     }else{
         // res.json(result)
         req.session.username=result.username
