@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const UserModel = require('./database/models/UserModel')
+const UserModel = require('./models/UserModel')
 const UserController = require('./controllers/UserController')
 var session = require('express-session')
 
