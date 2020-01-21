@@ -1,11 +1,11 @@
 
 
-const templateReplace=(template,product)=>{
-    var output=template.replace(/{%USERNAME%}/g,product.username)
-    output=output.replace(/{%EMAIL%}/g,product.email)
-    output=output.replace(/{%PASSWORD%}/g,product.password)
+const TemplateReplace=(template,data)=>{
+    var output=template.replace(/{%USERNAME%}/g,data.username)
+    output=output.replace(/{%EMAIL%}/g,data.email)
+    output=output.replace(/{%PASSWORD%}/g,data.password)
 
     return output
 }
 
-module.exports=templateReplace
+module.exports=TemplateReplace

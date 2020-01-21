@@ -1,6 +1,6 @@
 const UserModel = require('../models/UserModel')
 const fs = require('fs')
-var templateReplace = require('../functions/UserFunction')
+var TemplateReplace = require('../functions/UserFunction')
 
 
 const UserController = (req, res) => {
@@ -30,7 +30,7 @@ const UserController = (req, res) => {
             var resultArr = [result]
             
             var data = resultArr.map(el => {
-                    return templateReplace(template,el)
+                    return TemplateReplace(template,el)
             }).join('')
             console.log(data)
             res.send(data)
