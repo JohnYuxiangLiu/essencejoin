@@ -38,10 +38,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, "pages/index.html"))
 })
 app.get('/signin',(req,res)=>{
-    res.sendFile(path.resolve(__dirname,'pages/signin.html'))
+    res.sendFile(path.resolve(__dirname,'pages/user/signin.html'))
 })
 app.get('/user',(req,res)=>{
-    res.sendFile(path.resolve(__dirname,'pages/user.html'))
+    res.sendFile(path.resolve(__dirname,'pages/user/user.html'))
 })
 
 

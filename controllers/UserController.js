@@ -24,7 +24,7 @@ const UserController = (req, res) => {
             req.session.username = result.username
 
             // templateReplace
-            var template = fs.readFileSync(('./pages/user.html'), 'utf-8')
+            var template = fs.readFileSync(('./pages/user/user.html'), 'utf-8')
 
             // convert to array
             var resultArr = [result]

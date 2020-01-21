@@ -1,12 +1,14 @@
 const mongoose=require('mongoose')
 
-const UserSchema=new mongoose.Schema({
-    username:String,
-    email:String,
-    password:String,
-})
+const ActivitySchema=new mongoose.Schema([
+    {
+    swimming:String,
+    karaoke:String,
+    outdoor:String,
+}
+])
 
-const UserModel=mongoose.model('User',UserSchema)
+const ActivityModel=mongoose.model('Activity',ActivitySchema)
 
-module.exports=UserModel
+module.exports=ActivityModel
 
