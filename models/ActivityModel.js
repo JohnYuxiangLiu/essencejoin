@@ -1,6 +1,6 @@
 const mongoose=require('mongoose')
 
-const ActivitySchema=new mongoose.Schema([
+const activitySchema=new mongoose.Schema([
     {
     swimming:String,
     karaoke:String,
@@ -8,7 +8,7 @@ const ActivitySchema=new mongoose.Schema([
 }
 ])
 
-const ActivityModel=mongoose.model('Activity',ActivitySchema)
+const activityModel=mongoose.model('Activity',activitySchema)
 
-module.exports=ActivityModel
+module.exports=activityModel
 

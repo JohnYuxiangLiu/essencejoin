@@ -1,10 +1,10 @@
-const UserModel = require('../models/UserModel')
+const userModel = require('../models/userModel')
 const fs = require('fs')
-var TemplateReplace = require('../functions/UserFunction')
+var templateReplace = require('../functions/userFunction')
 
 
-const UserController = (req, res) => {
-    UserModel.findOne({
+const userController = (req, res) => {
+    userModel.findOne({
         $and: [{
                 email: req.body.email.toLowerCase()
             },
@@ -30,7 +30,7 @@ const UserController = (req, res) => {
             var resultArr = [result]
             
             var data = resultArr.map(el => {
-                    return TemplateReplace(template,el)
+                    return templateReplace(template,el)
             }).join('')
             console.log(data)
             res.send(data)
@@ -40,4 +40,4 @@ const UserController = (req, res) => {
     }).lean()
 }
 
-module.exports = UserController
+module.exports = userController

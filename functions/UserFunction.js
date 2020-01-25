@@ -1,6 +1,6 @@
 
 
-const TemplateReplace=(template,data)=>{
+const templateReplace=(template,data)=>{
     var output=template.replace(/{%USERNAME%}/g,data.username)
     output=output.replace(/{%EMAIL%}/g,data.email)
     output=output.replace(/{%PASSWORD%}/g,data.password)
@@ -8,4 +8,4 @@ const TemplateReplace=(template,data)=>{
     return output
 }
 
-module.exports=TemplateReplace
+module.exports=templateReplace
