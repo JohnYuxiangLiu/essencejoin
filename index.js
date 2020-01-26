@@ -1,52 +1,47 @@
-const express = require('express')
-const path = require('path')
-const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
-const UserController = require('./controllers/UserController')
-var session = require('express-session')
+const express = require("express");
+const path = require("path");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
-const app = new express()
+var activityRoute=require('./routes/activityRoute')
+var userRoute=require('./routes/userRoute')
+var session = require("express-session");
 
-
+const app = new express();
 
 // mongoose
-mongoose.connect('mongodb://localhost/essencejoin')
+mongoose.connect("mongodb://localhost/essencejoin");
 
 // use
-app.use(express.static('public')) //static files except html
-app.use(bodyParser.urlencoded({
+app.use(express.static("public")); //static files except html
+app.use(
+  bodyParser.urlencoded({
     extended: true
-}))
-app.use(bodyParser.json())
+  })
+);
+app.use(bodyParser.json());
 // session
 var sess = {
-    secret: 'keyboard cat',
-    cookie: {},
-    resave:false,
-    saveUninitialized:false,
+  secret: "keyboard cat",
+  cookie: {},
+  resave: false,
+  saveUninitialized: false
+};
+if (app.get("env") === "production") {
+  app.set("trust proxy", 1); // trust first proxy
+  sess.cookie.secure = true; // serve secure cookies
 }
-if (app.get('env') === 'production') {
-    app.set('trust proxy', 1) // trust first proxy
-    sess.cookie.secure = true // serve secure cookies
-}
-app.use(session(sess))
+app.use(session(sess));
 //////////////////////////////////////////////////////
 
 // route
-// get
-app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, "pages/index.html"))
-})
-app.get('/signin',(req,res)=>{
-    res.sendFile(path.resolve(__dirname,'pages/user/signin.html'))
-})
-app.get('/user',(req,res)=>{
-    res.sendFile(path.resolve(__dirname,'pages/user/user.html'))
-})
+app.route("/").get((req, res) => {
+  res.sendFile(path.resolve(__dirname, "pages/index.html"));
+});
+app.route("/signin").get((req, res) => {
+  res.sendFile(path.resolve(__dirname, "pages/user/signin.html"));
+});
+app.use('/user',userRoute)
+app.use('/activity',activityRoute)
 
-
-// post
-app.post('/user', UserController)
-
-
-app.listen(3000, () => console.log("listening on port 3000"))
+app.listen(3000, () => console.log("listening on port 3000"));

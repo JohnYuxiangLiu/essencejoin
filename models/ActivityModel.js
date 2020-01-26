@@ -1,14 +1,11 @@
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 
-const activitySchema=new mongoose.Schema([
-    {
-    swimming:String,
-    karaoke:String,
-    outdoor:String,
-}
-])
+const activitySchema = new mongoose.Schema(
+  {
+    activityName: String
+  }
+);
 
-const activityModel=mongoose.model('Activity',activitySchema)
+const activityModel = mongoose.model("Activity", activitySchema);
 
-module.exports=activityModel
-
+module.exports = activityModel;
