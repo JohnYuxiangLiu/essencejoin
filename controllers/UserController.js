@@ -1,14 +1,12 @@
 const userModel = require("../models/userModel");
 
-
-exports.postUser = async (req, res) => {
+exports.createUser = async (req, res) => {
   try {
-    var user = await userModel.create(req.body)
-
+    var createUser = await userModel.create(req.body);
 
     res.status(200).json({
       status: "success",
-      data: user
+      data: createUser
     });
   } catch (err) {
     res.status(404).json({
@@ -18,34 +16,55 @@ exports.postUser = async (req, res) => {
   }
 };
 
-
 exports.getUser = async (req, res) => {
-    try {
-      var getUser = await userModel
-        .find()
-        .lean();
-  
-      res.status(200).json({
-        status: "success",
-        data: getUser
-      });
-    } catch (err) {
-      res.status(404).json({
-        status: "fail",
-        massage: err
-      });
-    }
-  };
+  try {
+    var getUser = await userModel.find().lean();
 
+    res.status(200).json({
+      status: "success",
+      data: getUser
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      massage: err
+    });
+  }
+};
 
-
-
-
-
-
-
-
-
+// /:id
+exports.getUserId = async (req, res) => {
+  try {
+    var getUserId = await userModel.findById(req.params.id);
+    res.json({
+      status: "success",
+      data: getUserId
+    });
+  } catch (err) {
+    res.json({
+      status: "fail",
+      massage: err
+    });
+  }
+};
+exports.updateUserId = async (req, res) => {
+  try {
+    var updateUserId = await userModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { runValidators: true }
+    );
+    res.json({
+      status: "success",
+      data: updateUserId
+    });
+  } catch (err) {
+    res.json({
+      status: "fail",
+      massage: err
+    });
+  }
+};
 
 // const fs = require("fs");
 // var templateReplace = require("../functions/userFunction");
