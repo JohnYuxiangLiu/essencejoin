@@ -11,7 +11,7 @@ exports.createUser = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: "fail",
-      massage: err
+      message: err
     });
   }
 };
@@ -27,7 +27,7 @@ exports.getUser = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: "fail",
-      massage: err
+      message: err
     });
   }
 };
@@ -43,7 +43,7 @@ exports.getUserId = async (req, res) => {
   } catch (err) {
     res.json({
       status: "fail",
-      massage: err
+      message: err
     });
   }
 };
@@ -61,7 +61,7 @@ exports.updateUserId = async (req, res) => {
   } catch (err) {
     res.json({
       status: "fail",
-      massage: err
+      message: err
     });
   }
 };

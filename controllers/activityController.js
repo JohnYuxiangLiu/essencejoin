@@ -13,7 +13,7 @@ exports.getActivity = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: "fail",
-      massage: err
+      message: err
     });
   }
 };
