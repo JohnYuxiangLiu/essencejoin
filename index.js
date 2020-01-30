@@ -3,6 +3,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
+var dotenv=require('dotenv').config({path:'./config.env'})
 var activityRoute=require('./routes/activityRoute')
 var userRoute=require('./routes/userRoute')
 var session = require("express-session");
@@ -44,4 +45,4 @@ app.route("/signin").get((req, res) => {
 app.use('/user',userRoute)
 app.use('/activity',activityRoute)
 
-app.listen(3000, () => console.log("listening on port 3000"));
+app.listen(process.env.PORT, () => console.log(`listening on port ${process.env.PORT}`));
