@@ -13,11 +13,14 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: [true, "Email required"],
     lowercase: true,
+    // validator npm
     validate: [validator.isEmail, "Valid email required"]
   },
   password: {
     type: String,
-    required: [true, "Password required"]
+    required: [true, "Password required"],
+    // not send password in query from client
+    select:false,
   },
   passwordConfirm: {
     type: String,
@@ -44,6 +47,11 @@ userSchema.pre("save", async function(next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+// instance method based on mongoose userSchema
+userSchema.methods.checkPassword=async function(inputPassword,storedPassword){
+  return await bcryptjs.compare(inputPassword,storedPassword) //return true or false
+}
 
 const userModel = mongoose.model("User", userSchema);
 

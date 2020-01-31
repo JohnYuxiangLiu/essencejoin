@@ -4,8 +4,11 @@ var app = new express();
 var userController = require("../controllers/userController");
 var authController = require("../controllers/authController");
 
-// singin
+// auth
+// singup
 app.route("/signup").post(authController.signup);
+// signin
+app.route("/signin").post(authController.signin)
 
 //   user
 app
