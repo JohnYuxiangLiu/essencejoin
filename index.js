@@ -35,6 +35,15 @@ if (app.get("env") === "production") {
 app.use(session(sess));
 //////////////////////////////////////////////////////
 
+// middleware
+// run before route
+app.use((req,res,next)=>{
+  // console.log(req.headers)
+  next()
+})
+
+
+////////////////////////////////////////////////////////
 // route
 app.route("/").get((req, res) => {
   res.sendFile(path.resolve(__dirname, "pages/index.html"));

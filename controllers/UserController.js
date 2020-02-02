@@ -24,7 +24,7 @@ exports.createUser = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     var getUser = await userModel.find().lean();
-
+    
     res.status(200).json({
       status: "success",
       data: getUser
