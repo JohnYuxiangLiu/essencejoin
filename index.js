@@ -41,6 +41,7 @@ app.use(session(sess));
 // run before route
 app.use((req,res,next)=>{
   // console.log(req.headers)
+  
   next()
 })
 
@@ -65,4 +66,4 @@ app.all('*',(req,res,next)=>{
 // express global error middleware, defined with arg err in front
 app.use(errorController)
 
-app.listen(process.env.PORT, () => console.log(`listening on port ${process.env.PORT}`));
+app.listen(process.env.PORT, () => console.log(`listening on port ${process.env.PORT}\nEnvironment is set to: ${process.env.NODE_ENV}`));
