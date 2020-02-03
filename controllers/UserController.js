@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel");
+const errorGlobal=require('../utils/errorGlobal')
 
 exports.createUser = async (req, res) => {
   try {
@@ -38,36 +39,32 @@ exports.getUser = async (req, res) => {
 };
 
 // /:id
-exports.getUserId = async (req, res) => {
+exports.getUserId = async (req, res, next) => {
   try {
-    var getUserId = await userModel.findById(req.params.id);
+    const getUserId = await userModel.findById(req.params.id);
+
     res.json({
       status: "success",
       data: getUserId
     });
   } catch (err) {
-    res.json({
-      status: "fail",
-      message: err
-    });
+      next(err)
   }
 };
-exports.updateUserId = async (req, res) => {
+exports.updateUserId = async (req, res,next) => {
   try {
     var updateUserId = await userModel.findByIdAndUpdate(
       req.params.id,
       req.body,
       { runValidators: true }
     );
+
     res.json({
       status: "success",
       data: updateUserId
     });
   } catch (err) {
-    res.json({
-      status: "fail",
-      message: err
-    });
+      next(err)
   }
 };
 

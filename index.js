@@ -7,6 +7,8 @@ var dotenv=require('dotenv').config({path:'./config.env'})
 var activityRoute=require('./routes/activityRoute')
 var userRoute=require('./routes/userRoute')
 var session = require("express-session");
+var errorGlobal=require('./utils/errorGlobal')
+var errorController=require('./controllers/errorController')
 
 const app = new express();
 
@@ -53,5 +55,14 @@ app.route("/signin").get((req, res) => {
 });
 app.use('/user',userRoute)
 app.use('/activity',activityRoute)
+
+// error msg for all other routes unspecified
+app.all('*',(req,res,next)=>{
+  // putting arg in next() will skip all middlewares to global error middleware
+  next(new errorGlobal(404,`Cannot find ${req.originalUrl} on the server`))
+})
+
+// express global error middleware, defined with arg err in front
+app.use(errorController)
 
 app.listen(process.env.PORT, () => console.log(`listening on port ${process.env.PORT}`));

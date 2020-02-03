@@ -32,7 +32,7 @@ exports.signup = async (req, res, next) => {
 };
 
 // authorisation with token to access protected pages
-exports.authSignin = (req, res, next) => {
+exports.authSignin = async (req, res, next) => {
   // get token from user req
   let token;
   if (
@@ -44,17 +44,18 @@ exports.authSignin = (req, res, next) => {
 
   if(!token){
     return next(res.json(new errorGlobal(401,'Cannot signin')))
-  }
-  
+  }  
 
   // verify the token
-
+  // const {promisify}=require('util')
+  const decodeToken=await jwt.verify(token,process.env.JWT_SECRET)
+  
   // check if user still exist
 
   // check if user has changed password
 
   
-  // next();
+  next();
 };
 
 // signin post method

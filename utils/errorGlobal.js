@@ -1,16 +1,22 @@
 class errorGlobal extends Error {
   constructor(statusCode, message) {
-    super();
+    super(message);
     this.statusCode = statusCode;
     this.status = `${statusCode}`.startsWith("4") ? "fail" : "";
     this.message = message;
-    
-    return {
-      statusCode: this.statusCode,
-      status: this.status,
-      message: this.message,
-      stack: new Error().stack,
-    };
+    // operational including user operation only, not include 3rd party api, programming error...
+    this.userError=true
+
+    // Error.captureStackTrace(this,this.construcotr)
+
+
+
+    // return {
+    //   statusCode: this.statusCode,
+    //   status: this.status,
+    //   message: this.message,
+    //   stack: new Error().stack,
+    // };
   }
 }
 
