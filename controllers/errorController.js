@@ -7,6 +7,20 @@ const castError=(err)=>{
   return new errorGlobal(404,message) //errorGlobal will contain userError to production error
 }
 
+// duplicate obj key error
+const duplicateKeyError=(err)=>{
+  const message=`Duplicate object key value: ${err.keyValue}`
+  return new errorGlobal(404,message)
+}
+
+// validator error e.g. mongoose email enter not correct
+const validationError=(err)=>{
+  var messageError=Object.values(err.errors).map(elt=>{
+    return elt.message //elt key: email, elt value: values of email 
+  })
+  return new errorGlobal(400,messageError)
+}
+
 // dev error
 const errorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -43,8 +57,12 @@ module.exports = (err, req, res, next) => {
     errorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
     let error={...err} //so error can be used on other types of error
+    // cast error like wrong url
     if(error.name==='CastError'){error=castError(error)}
-    console.log(error)
+    // duplicate key error in mongodb return a error code 11000, e.g. insert a same obj
+    if(error.code==='11000'){error=duplicateKeyError(error)}
+    if(error.name==='ValidationError'){error=validationError(error)}
+  
     errorProd(error, res);
   }
 };

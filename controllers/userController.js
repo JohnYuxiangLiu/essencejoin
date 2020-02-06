@@ -1,7 +1,7 @@
 const userModel = require("../models/userModel");
 const errorGlobal=require('../utils/errorGlobal')
 
-exports.createUser = async (req, res) => {
+exports.createUser = async (req, res, next) => {
   try {
     var createUser = await userModel.create({
       username:req.body.username,
@@ -15,10 +15,11 @@ exports.createUser = async (req, res) => {
       data: createUser
     });
   } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err
-    });
+    // res.status(404).json({
+    //   status: "fail",
+    //   message: err
+    // });
+    next(err)
   }
 };
 
