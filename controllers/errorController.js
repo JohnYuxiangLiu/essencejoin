@@ -21,6 +21,11 @@ const validationError=(err)=>{
   return new errorGlobal(400,messageError)
 }
 
+const jsonWebTokenError=(err)=>{
+  // 401: unauth
+  return new errorGlobal(401,'Invalid JsonWebToken.')
+}
+
 // dev error
 const errorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -62,6 +67,7 @@ module.exports = (err, req, res, next) => {
     // duplicate key error in mongodb return a error code 11000, e.g. insert a same obj
     if(error.code==='11000'){error=duplicateKeyError(error)}
     if(error.name==='ValidationError'){error=validationError(error)}
+    if(error.name==='JsonWebTokenError'){error=jsonWebTokenError(error)}
   
     errorProd(error, res);
   }

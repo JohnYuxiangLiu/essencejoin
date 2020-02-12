@@ -1,7 +1,7 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
-const errorGlobal=require('../utils/errorGlobal')
+const errorGlobal = require("../utils/errorGlobal");
 
 // sign token function, avoid repetition
 const signToken = async id => {
@@ -33,29 +33,32 @@ exports.signup = async (req, res, next) => {
 
 // authorisation with token to access protected pages
 exports.authSignin = async (req, res, next) => {
-  // get token from user req
-  let token;
-  if (
-    req.headers.authorisation &&
-    req.headers.authorisation.startsWith("bearer")
-  ) {
-    token = req.headers.authorisation.split(" ")[1];
+  try {
+    // get token from user req
+    let token;
+    if (
+      req.headers.authorisation &&
+      req.headers.authorisation.startsWith("bearer")
+    ) {
+      token = req.headers.authorisation.split(" ")[1];
+    }
+
+    if (!token) {
+      return next(new errorGlobal(401, "Cannot signin"));
+    }
+
+    // verify the token
+    // const {promisify}=require('util')
+    const decodeToken = await jwt.verify(token, process.env.JWT_SECRET);
+
+    // check if user still exist
+
+    // check if user has changed password
+
+    next();
+  } catch (err) {
+    next(err);
   }
-
-  if(!token){
-    return next(res.json(new errorGlobal(401,'Cannot signin')))
-  }  
-
-  // verify the token
-  // const {promisify}=require('util')
-  const decodeToken=await jwt.verify(token,process.env.JWT_SECRET)
-  
-  // check if user still exist
-
-  // check if user has changed password
-
-  
-  next();
 };
 
 // signin post method
