@@ -1,6 +1,5 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-
 const errorGlobal = require("../utils/errorGlobal");
 
 // sign token function, avoid repetition
@@ -52,9 +51,18 @@ exports.authSignin = async (req, res, next) => {
     const decodeToken = await jwt.verify(token, process.env.JWT_SECRET);
 
     // check if user still exist
-
+    const currentUser=await userModel.findById(decodeToken.id)
+    if(!currentUser){
+      return next(new errorGlobal(401,'Cannot find user'))
+    }
     // check if user has changed password
+    if(currentUser.changedPasswordAfter(decodeToken.iat)){
+      return next(new errorGlobal(401,'Password changed recently, signin again.'))
+    }
 
+    // pass user to req.user for future use
+    req.user=currentUser
+    // passed auth, next to get data
     next();
   } catch (err) {
     next(err);

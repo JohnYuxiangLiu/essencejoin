@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Password required"],
     // not send password in query from client
-    select:false,
+    select: false
   },
   passwordConfirm: {
     type: String,
@@ -34,7 +34,8 @@ const userSchema = new mongoose.Schema({
         }
       }
     }
-  }
+  },
+  passwordChangedAt: Date,
 });
 
 // you have to use function instead of ()=> for this.?
@@ -49,9 +50,28 @@ userSchema.pre("save", async function(next) {
 });
 
 // instance method based on mongoose userSchema
-userSchema.methods.checkPassword=async function(inputPassword,storedPassword){
-  return await bcryptjs.compare(inputPassword,storedPassword) //return true or false
-}
+userSchema.methods.checkPassword = async function(
+  inputPassword,
+  storedPassword
+) {
+  return await bcryptjs.compare(inputPassword, storedPassword); //return true or false
+};
+
+// if password changed
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    // getTime() convert 2020-02-01 to ms; 10 is base 10
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    
+    // return true if password changed after token issued
+    return JWTTimestamp < changedTimestamp  
+  }
+  // return false if password not changed
+  return false;
+};
 
 const userModel = mongoose.model("User", userSchema);
 
