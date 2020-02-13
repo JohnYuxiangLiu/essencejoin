@@ -7,5 +7,6 @@ var authController=require('../controllers/authController')
 
 //   activity
 app.route("/").get(authController.authSignin,activityController.getActivity);
+app.route("/:id").get(authController.authSignin,activityController.deleteActivity);
 
 module.exports=app
