@@ -3,12 +3,13 @@ const jwt = require("jsonwebtoken");
 const errorGlobal = require("../utils/errorGlobal");
 
 // sign token function, avoid repetition
-const signToken = async id => {
+exports.signToken = async id => {
   var token = await jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
   return token;
 };
+//////////////////////////////////////////////////////////////////
 
 // singup post method
 exports.signup = async (req, res, next) => {
@@ -29,6 +30,7 @@ exports.signup = async (req, res, next) => {
     });
   }
 };
+///////////////////////////////////////////////////////////////////////
 
 // signin post method
 exports.signin = async (req, res, next) => {
@@ -68,6 +70,7 @@ exports.signin = async (req, res, next) => {
     });
   }
 };
+////////////////////////////////////////////////////////////////////////
 
 // authorisation with token to access protected pages
 exports.authSignin = async (req, res, next) => {
@@ -90,33 +93,49 @@ exports.authSignin = async (req, res, next) => {
     const decodeToken = await jwt.verify(token, process.env.JWT_SECRET);
 
     // check if user still exist
-    const currentUser=await userModel.findById(decodeToken.id)
-    if(!currentUser){
-      return next(new errorGlobal(401,'Cannot find user'))
+    const currentUser = await userModel.findById(decodeToken.id);
+    if (!currentUser) {
+      return next(new errorGlobal(401, "Cannot find user"));
     }
     // check if user has changed password
-    if(currentUser.changedPasswordAfter(decodeToken.iat)){
-      return next(new errorGlobal(401,'Password changed recently, signin again.'))
+    if (currentUser.changedPasswordAfter(decodeToken.iat)) {
+      return next(
+        new errorGlobal(401, "Password changed recently, signin again.")
+      );
     }
 
     // pass user to req.user for future use
-    req.user=currentUser
+    req.user = currentUser;
     // passed auth, next to get data
     next();
   } catch (err) {
     next(err);
   }
 };
+////////////////////////////////////////////////////////////////////////////
 
-exports.authorisation=(...roles)=>{
-  return (req,res,next)=>{
-    if(!roles.includes(req.user.role)){
-      return next(new errorGlobal(403,'Cannot grant permission.'))
+// authorisation: only certain group's can perform certain actions, e.g. admin can delete
+exports.authorisation = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new errorGlobal(403, "Cannot grant permission."));
     }
-    next()
+    next();
+  };
+};
+///////////////////////////////////////////////////////////////////////////
+
+exports.forgotPassword = async (req, res, next) => {
+  const user = await userModel.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new errorGlobal(404, "Cannot find user from email."));
   }
-}
 
+  // instantiate a new passwordResetToken, actually user.passwordReset() has been executed. it's just resetToken has not be used
+  // user.passwordReset generate this.passwordResetToken, this.passwordResetExpire so they can be saved to database in user.save()
+  const resetToken = user.passwordReset();
 
-
-
+  // save to userModel: deactivate validation so we can save
+  await user.save({ validateBeforeSave: false });
+};
+/////////////////////////////////////////////////////////////////////////////
