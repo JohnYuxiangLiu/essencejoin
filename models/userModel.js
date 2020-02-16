@@ -101,7 +101,7 @@ userSchema.methods.passwordReset = async function() {
 
   // reset in 10min in ms
   this.passwordResetExpire = await(Date.now() + 10 * 60 * 1000);
-
+  
   // send plain token to user for later compare encrypted
   return resetToken;
 };

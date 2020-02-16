@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const errorGlobal = require("../utils/errorGlobal");
+const sendEmail = require("../utils/email");
 
 // sign token function, avoid repetition
 exports.signToken = async id => {
@@ -133,9 +134,32 @@ exports.forgotPassword = async (req, res, next) => {
 
   // instantiate a new passwordResetToken, actually user.passwordReset() has been executed. it's just resetToken has not be used
   // user.passwordReset generate this.passwordResetToken, this.passwordResetExpire so they can be saved to database in user.save()
-  const resetToken = user.passwordReset();
+  const resetToken = await user.passwordReset();
 
   // save to userModel: deactivate validation so we can save
   await user.save({ validateBeforeSave: false });
+
+  // send email
+  const resetUrl=`${req.protocol}://${req.get('host')}/user/forgotPassword/${resetToken}`
+  const message=`Submit a patch request to reset your password, your reset link is ${resetUrl}`
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Reset password token is valid for 10 minutes.",
+      message: message,
+    });
+
+    res.status(200).json({
+      status:'success',
+      message:'Token sent to email.'
+    })
+  }catch(err){
+    // clear the values
+    user.passwordResetToken=undefined
+    user.passwordResetExpire=undefined
+    await user.save({validateBeforeSave:false})
+
+    return next(new errorGlobal(500,'Error sending email.'))
+  }
 };
 /////////////////////////////////////////////////////////////////////////////
