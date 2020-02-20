@@ -9,8 +9,10 @@ var authController = require("../controllers/authController");
 app.route("/signup").post(authController.signup);
 // signin
 app.route("/signin").post(authController.signin)
-// forgot password
+// forgot password post email
 app.route("/forgotPassword").post(authController.forgotPassword)
+// reset password get token
+app.route("/resetPassword/:token").patch(authController.resetPassword)
 
 //   user
 app

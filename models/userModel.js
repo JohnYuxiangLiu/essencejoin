@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpire: Date
+  passwordResetExpire: Date,
 });
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -99,8 +99,8 @@ userSchema.methods.passwordReset = async function() {
     .update(resetToken)
     .digest("hex");
 
-  // reset in 10min in ms
-  this.passwordResetExpire = await(Date.now() + 10 * 60 * 1000);
+  // reset in 60min in ms
+  this.passwordResetExpire = await(Date.now() + 60 * 60 * 1000);
   
   // send plain token to user for later compare encrypted
   return resetToken;

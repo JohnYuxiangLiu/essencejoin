@@ -2,6 +2,7 @@ const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const errorGlobal = require("../utils/errorGlobal");
 const sendEmail = require("../utils/email");
+const crypto = require("crypto");
 
 // sign token function, avoid repetition
 exports.signToken = async id => {
@@ -140,26 +141,61 @@ exports.forgotPassword = async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // send email
-  const resetUrl=`${req.protocol}://${req.get('host')}/user/forgotPassword/${resetToken}`
-  const message=`Submit a patch request to reset your password, your reset link is ${resetUrl}`
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/user/resetPassword/${resetToken}`;
+  const message = `Submit a patch request to reset your password, your reset link is ${resetUrl}`;
+
   try {
     await sendEmail({
       email: user.email,
-      subject: "Reset password token is valid for 10 minutes.",
-      message: message,
+      subject: "Reset password token is valid for 60 minutes.",
+      message: message
     });
 
     res.status(200).json({
-      status:'success',
-      message:'Token sent to email.'
-    })
-  }catch(err){
+      status: "success",
+      message: "Token sent to email."
+    });
+  } catch (err) {
     // clear the values
-    user.passwordResetToken=undefined
-    user.passwordResetExpire=undefined
-    await user.save({validateBeforeSave:false})
+    user.passwordResetToken = undefined;
+    user.passwordResetExpire = undefined;
+    await user.save({ validateBeforeSave: false });
 
-    return next(new errorGlobal(500,'Error sending email.'))
+    return next(new errorGlobal(500, "Error sending email."));
   }
 };
 /////////////////////////////////////////////////////////////////////////////
+
+exports.resetPassword = async (req, res, next) => {
+  //get url get's token and then encrypt
+  const hashToken = await crypto
+  .createHash("sha256")
+  .update(req.params.token)
+  .digest("hex");
+  // match the encrypt token with the one in db and ensure expire date > time now
+  const user = await userModel.findOne({
+    passwordResetToken: hashToken,
+    passwordResetExpire: { $gt: Date.now() }
+  });
+  console.log(hashToken)
+  //if user doesn't exist
+  if (!user) {
+    return next(new errorGlobal(400, "Token expired or invalid."));
+  }
+
+  // else if user found
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpire = undefined;
+  await user.save();
+
+  // send token to user to access restricted area
+  const token = this.signToken(user._id);
+  res.status(200).json({
+    status: "success",
+    token: token
+  });
+};
