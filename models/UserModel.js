@@ -73,7 +73,7 @@ userSchema.pre("save", function(next) {
 });
 /////////////////////////////////////////////////////////////////////////////////////
 
-// instance method based on mongoose userSchema
+// instance method based on mongoose userSchema to check user input plain password with encrypted password
 userSchema.methods.checkPassword = async function(
   inputPassword,
   storedPassword

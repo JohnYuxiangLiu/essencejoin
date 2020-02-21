@@ -13,18 +13,26 @@ const signToken = async id => {
 };
 //////////////////////////////////////////////////////////////////
 
+// create and send token
+const createSendToken=async (user,statusCode,res)=>{
+  const token=await signToken(user._id)
+
+  res.status(statusCode).json({
+    status:'success',
+    token,
+    data:{
+      user,
+    }
+  })
+}
+
 // singup post method
 exports.signup = async (req, res, next) => {
   try {
     var newUser = await userModel.create(req.body);
 
-    var token = await signToken(newUser._id);
+    createSendToken(newUser,201,res)
 
-    res.status(201).json({
-      status: "success",
-      token,
-      data: newUser
-    });
   } catch (err) {
     res.status(404).json({
       status: "fail",
@@ -58,11 +66,8 @@ exports.signin = async (req, res, next) => {
       });
     }
 
-    var token = await signToken(user._id);
-    return res.status(200).json({
-      status: "success",
-      token
-    });
+    createSendToken(user,200,res)
+
   } catch (err) {
     // move to next with err
     res.status(400).json({
@@ -93,8 +98,9 @@ exports.authSignin = async (req, res, next) => {
     // verify the token
     // const {promisify}=require('util')
     const decodeToken = await jwt.verify(token, process.env.JWT_SECRET);
-
+    console.log(decodeToken)
     // check if user still exist
+    // Note that Mongoose will cast the provided id value to the type of _id as defined in the schema (defaulting to ObjectId).
     const currentUser = await userModel.findById(decodeToken.id);
     if (!currentUser) {
       return next(new errorGlobal(401, "Cannot find user"));
@@ -169,12 +175,11 @@ exports.forgotPassword = async (req, res, next) => {
 /////////////////////////////////////////////////////////////////////////////
 
 exports.resetPassword = async (req, res, next) => {
-  
   //get url get's token and then encrypt
   const hashToken = await crypto
-  .createHash("sha256")
-  .update(req.params.token)
-  .digest("hex");
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
   // match the encrypt token with the one in db and ensure expire date > time now
   const user = await userModel.findOne({
     passwordResetToken: hashToken,
@@ -194,11 +199,30 @@ exports.resetPassword = async (req, res, next) => {
   await user.save();
 
   // send token to user to access restricted area
-  var token = await signToken(user._id);
-  console.log(user,token)
-  res.status(200).json({
-    status: "success",
-    token,
-  });
+  createSendToken(user,200,res)
+};
+//////////////////////////////////////////////////////////////////////////////
+
+// update password
+exports.updatePassword = async (req, res, next) => {
+  // get current username from collection
+  // auto cast _id to id
+  const currentUser = await userModel.findById(req.user.id).select('+password');
+
+  // check posted password correct
+  if(!(await currentUser.checkPassword(req.body.password,currentUser.password))){
+    return next(new errorGlobal(401,'Password incorrect.'))
+  }
+
+  // if so update password, save to db
+  currentUser.password=req.body.passwordNew
+  currentUser.passwordConfirm=req.body.passwordNewConfirm
+  console.log(currentUser)
+  // validation is off, so confirm password will be checked
+  // not using updateById because the validation in userModel passwordConfirm won't work; also userModel.pre won't work as well
+  await currentUser.save()
+
+  // login user, send new jwt
+  createSendToken(currentUser,200,res)
 
 };
