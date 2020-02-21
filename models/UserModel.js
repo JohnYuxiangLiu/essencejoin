@@ -46,11 +46,13 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpire: Date,
+  passwordResetExpire: Date
 });
 ////////////////////////////////////////////////////////////////////////////////////
 
+// middleware:
 // you have to use function instead of ()=> for this.?
+// encrypt password
 userSchema.pre("save", async function(next) {
   if (!this.isModified("password")) return next();
 
@@ -58,6 +60,15 @@ userSchema.pre("save", async function(next) {
 
   //   delete passwordConfirm after auth
   this.passwordConfirm = undefined;
+  next();
+});
+
+// assign value to passwordChangedAt:
+userSchema.pre("save", function(next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  // -1s due to: saving to db is slower than issuing web token, therefore, make change of password timestamp set after jsonwebtoken created. So user can't login after password changed using the token, e.g. token signToken(user._id) generated before changedPasswordAfter is true:
+  this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 /////////////////////////////////////////////////////////////////////////////////////
@@ -100,8 +111,8 @@ userSchema.methods.passwordReset = async function() {
     .digest("hex");
 
   // reset in 60min in ms
-  this.passwordResetExpire = await(Date.now() + 60 * 60 * 1000);
-  
+  this.passwordResetExpire = await (Date.now() + 60 * 60 * 1000);
+
   // send plain token to user for later compare encrypted
   return resetToken;
 };

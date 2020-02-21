@@ -4,8 +4,8 @@ const errorGlobal = require("../utils/errorGlobal");
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 
-// sign token function, avoid repetition
-exports.signToken = async id => {
+// sign token function, avoid repetition, only this class use it:
+const signToken = async id => {
   var token = await jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
@@ -18,7 +18,7 @@ exports.signup = async (req, res, next) => {
   try {
     var newUser = await userModel.create(req.body);
 
-    var token = signToken(newUser._id);
+    var token = await signToken(newUser._id);
 
     res.status(201).json({
       status: "success",
@@ -169,6 +169,7 @@ exports.forgotPassword = async (req, res, next) => {
 /////////////////////////////////////////////////////////////////////////////
 
 exports.resetPassword = async (req, res, next) => {
+  
   //get url get's token and then encrypt
   const hashToken = await crypto
   .createHash("sha256")
@@ -179,7 +180,7 @@ exports.resetPassword = async (req, res, next) => {
     passwordResetToken: hashToken,
     passwordResetExpire: { $gt: Date.now() }
   });
-  console.log(hashToken)
+
   //if user doesn't exist
   if (!user) {
     return next(new errorGlobal(400, "Token expired or invalid."));
@@ -193,9 +194,11 @@ exports.resetPassword = async (req, res, next) => {
   await user.save();
 
   // send token to user to access restricted area
-  const token = this.signToken(user._id);
+  var token = await signToken(user._id);
+  console.log(user,token)
   res.status(200).json({
     status: "success",
-    token: token
+    token,
   });
+
 };
