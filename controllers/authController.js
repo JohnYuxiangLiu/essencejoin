@@ -101,6 +101,7 @@ exports.authSignin = async (req, res, next) => {
     console.log(decodeToken)
     // check if user still exist
     // Note that Mongoose will cast the provided id value to the type of _id as defined in the schema (defaulting to ObjectId).
+    // only id will work: { id: '5e4de233dea5a821543906bd', iat: 1582330065, exp: 1590106065 }
     const currentUser = await userModel.findById(decodeToken.id);
     if (!currentUser) {
       return next(new errorGlobal(401, "Cannot find user"));
@@ -207,7 +208,7 @@ exports.resetPassword = async (req, res, next) => {
 exports.updatePassword = async (req, res, next) => {
   // get current username from collection
   // auto cast _id to id
-  const currentUser = await userModel.findById(req.user.id).select('+password');
+  const currentUser = await userModel.findById(req.user._id).select('+password');
 
   // check posted password correct
   if(!(await currentUser.checkPassword(req.body.password,currentUser.password))){
