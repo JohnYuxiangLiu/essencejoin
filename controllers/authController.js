@@ -4,6 +4,7 @@ const errorGlobal = require("../utils/errorGlobal");
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 
+// functions:
 // sign token function, avoid repetition, only this class use it:
 const signToken = async id => {
   var token = await jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -14,25 +15,42 @@ const signToken = async id => {
 //////////////////////////////////////////////////////////////////
 
 // create and send token
-const createSendToken=async (user,statusCode,res)=>{
-  const token=await signToken(user._id)
+const createSendToken = async (user, statusCode, res) => {
+  const token = await signToken(user._id);
 
   res.status(statusCode).json({
-    status:'success',
+    status: "success",
     token,
-    data:{
-      user,
+    data: {
+      user
     }
-  })
-}
+  });
+};
+////////////////////////////////////////////////////////////////////
+
+// filter only allowed fileds to be updated:
+// ...: break down an obj
+const filterObj = (objs, ...allowedFields) => {
+  const newObj = {};
+  // loop through objects' keys as arrays, e.g. age,name,email...
+  Object.keys(objs).forEach(elt => {
+    if (allowedFields.includes(elt)) {
+      // assign the values, and keys will be in newObj
+      newObj[elt] = objs[elt];
+    }
+  });
+  // contain key and values
+  return newObj;
+};
+
+/////////////////////////////////////////////////////////////////////
 
 // singup post method
 exports.signup = async (req, res, next) => {
   try {
     var newUser = await userModel.create(req.body);
 
-    createSendToken(newUser,201,res)
-
+    createSendToken(newUser, 201, res);
   } catch (err) {
     res.status(404).json({
       status: "fail",
@@ -66,8 +84,7 @@ exports.signin = async (req, res, next) => {
       });
     }
 
-    createSendToken(user,200,res)
-
+    createSendToken(user, 200, res);
   } catch (err) {
     // move to next with err
     res.status(400).json({
@@ -98,7 +115,7 @@ exports.authSignin = async (req, res, next) => {
     // verify the token
     // const {promisify}=require('util')
     const decodeToken = await jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decodeToken)
+
     // check if user still exist
     // Note that Mongoose will cast the provided id value to the type of _id as defined in the schema (defaulting to ObjectId).
     // only id will work: { id: '5e4de233dea5a821543906bd', iat: 1582330065, exp: 1590106065 }
@@ -200,7 +217,7 @@ exports.resetPassword = async (req, res, next) => {
   await user.save();
 
   // send token to user to access restricted area
-  createSendToken(user,200,res)
+  createSendToken(user, 200, res);
 };
 //////////////////////////////////////////////////////////////////////////////
 
@@ -208,22 +225,53 @@ exports.resetPassword = async (req, res, next) => {
 exports.updatePassword = async (req, res, next) => {
   // get current username from collection
   // auto cast _id to id
-  const currentUser = await userModel.findById(req.user._id).select('+password');
+  const currentUser = await userModel
+    .findById(req.user._id)
+    .select("+password");
 
   // check posted password correct
-  if(!(await currentUser.checkPassword(req.body.password,currentUser.password))){
-    return next(new errorGlobal(401,'Password incorrect.'))
+  if (
+    !(await currentUser.checkPassword(req.body.password, currentUser.password))
+  ) {
+    return next(new errorGlobal(401, "Password incorrect."));
   }
 
   // if so update password, save to db
-  currentUser.password=req.body.passwordNew
-  currentUser.passwordConfirm=req.body.passwordNewConfirm
-  console.log(currentUser)
+  currentUser.password = req.body.passwordNew;
+  currentUser.passwordConfirm = req.body.passwordNewConfirm;
+
   // validation is off, so confirm password will be checked
-  // not using updateById because the validation in userModel passwordConfirm won't work; also userModel.pre won't work as well
-  await currentUser.save()
-
+  // not using updateById because the validation in userModel passwordConfirm won't be included; also userModel.pre won't be included as well
+  await currentUser.save();
+  
   // login user, send new jwt
-  createSendToken(currentUser,200,res)
+  createSendToken(currentUser, 200, res);
+};
+//////////////////////////////////////////////////////////////////////////////////
 
+// update user details
+exports.updateUser = async (req, res, next) => {
+  try {
+    // only name and email are allowed to be updated in req.body
+    // filteredBody return a object containing multi objs
+    var filteredBody = filterObj(req.body, "name", "email");
+    
+    // new: return new modified doc, runValidators: validate email add etc.,
+    // don't use user.save() here because it will run the passwordConfirm validator which passwordConfirm will be mandatory field
+    // filteredBody is objects
+    const updatedUser = await userModel.findByIdAndUpdate(
+      req.user._id,
+      filteredBody,
+      { new: true, runValidators: true }
+    );
+    
+    res.status(200).json({
+      status: "success",
+      data: {
+        user: updatedUser,
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
 };

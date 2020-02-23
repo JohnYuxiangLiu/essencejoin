@@ -15,6 +15,9 @@ app.route("/forgotPassword").post(authController.forgotPassword)
 app.route("/resetPassword/:token").patch(authController.resetPassword)
 // update password after sign in
 app.route("/updatePassword").patch(authController.authSignin,authController.updatePassword)
+// update user details
+app.route("/updateUser").patch(authController.authSignin,authController.updateUser)
+
 
 //   user
 app
