@@ -18,6 +18,26 @@ const signToken = async id => {
 const createSendToken = async (user, statusCode, res) => {
   const token = await signToken(user._id);
 
+  // send cookie
+  const cookieOptions = {
+    // 1day:1000*60*60*24
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 1000 * 60 * 60 * 24
+    ),
+    httpOnly: true
+  };
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.secure = true;
+  }
+
+  // send cookie
+  res.cookie("jwt", token, cookieOptions);
+
+  // res.json() will send back password, because select: false only apply to query data, not create new data
+  // remove the passowrd in response but not saved to db
+  user.password=undefined
+
+  // send token
   res.status(statusCode).json({
     status: "success",
     token,
@@ -243,11 +263,8 @@ exports.updatePassword = async (req, res, next) => {
   // validation is off, so confirm password will be checked
   // not using updateById because the validation in userModel passwordConfirm won't be included; also userModel.pre won't be included as well
   await currentUser.save();
-  
+
   // login user, send new jwt
   createSendToken(currentUser, 200, res);
 };
 //////////////////////////////////////////////////////////////////////////////////
-
-
-

@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Password required"],
-    // not send password in query from client
+    // not send password in query from client, only apply to query data, doesn't apply to create new data
     select: false
   },
   passwordConfirm: {
