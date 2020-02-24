@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const cookieParser=require('cookie-parser')
+// express-rate-limit can only be install to local not global
+const expressRateLimit=require('express-rate-limit')
 
 var activityRoute=require('./routes/activityRoute')
 var userRoute=require('./routes/userRoute')
@@ -25,6 +27,13 @@ app.use(
 app.use(bodyParser.json());
 // cookie parser
 app.use(cookieParser())
+// express rate limit
+app.use(expressRateLimit({
+  // within how long time frame, in ms
+  windowMs:60*60*1000,
+  // 100 attemps to query, after that will show Too many requests, please try again later. 
+  max:100,
+}))
 
 //////////////////////////////////////////////////////
 

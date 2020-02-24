@@ -1,6 +1,23 @@
 const userModel = require("../models/userModel");
 const errorGlobal = require("../utils/errorGlobal");
 
+// functions
+// filter only allowed fileds to be updated:
+// ...: break down an obj
+const filterObj = (objs, ...allowedFields) => {
+  const newObj = {};
+  // loop through objects' keys as arrays, e.g. age,name,email...
+  Object.keys(objs).forEach(elt => {
+    if (allowedFields.includes(elt)) {
+      // assign the values, and keys will be in newObj
+      newObj[elt] = objs[elt];
+    }
+  });
+  // contain key and values
+  return newObj;
+};
+/////////////////////////////////////////////////////////////////////
+
 exports.createUser = async (req, res, next) => {
   try {
     var createUser = await userModel.create({

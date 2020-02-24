@@ -48,23 +48,6 @@ const createSendToken = async (user, statusCode, res) => {
 };
 ////////////////////////////////////////////////////////////////////
 
-// filter only allowed fileds to be updated:
-// ...: break down an obj
-const filterObj = (objs, ...allowedFields) => {
-  const newObj = {};
-  // loop through objects' keys as arrays, e.g. age,name,email...
-  Object.keys(objs).forEach(elt => {
-    if (allowedFields.includes(elt)) {
-      // assign the values, and keys will be in newObj
-      newObj[elt] = objs[elt];
-    }
-  });
-  // contain key and values
-  return newObj;
-};
-
-/////////////////////////////////////////////////////////////////////
-
 // singup post method
 exports.signup = async (req, res, next) => {
   try {
