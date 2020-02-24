@@ -249,29 +249,5 @@ exports.updatePassword = async (req, res, next) => {
 };
 //////////////////////////////////////////////////////////////////////////////////
 
-// update user details
-exports.updateUser = async (req, res, next) => {
-  try {
-    // only name and email are allowed to be updated in req.body
-    // filteredBody return a object containing multi objs
-    var filteredBody = filterObj(req.body, "name", "email");
-    
-    // new: return new modified doc, runValidators: validate email add etc.,
-    // don't use user.save() here because it will run the passwordConfirm validator which passwordConfirm will be mandatory field
-    // filteredBody is objects
-    const updatedUser = await userModel.findByIdAndUpdate(
-      req.user._id,
-      filteredBody,
-      { new: true, runValidators: true }
-    );
-    
-    res.status(200).json({
-      status: "success",
-      data: {
-        user: updatedUser,
-      }
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+
+

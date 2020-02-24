@@ -46,12 +46,17 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpire: Date
+  passwordResetExpire: Date,
+  active:{
+    type:Boolean,
+    default:true,
+  }
 });
 ////////////////////////////////////////////////////////////////////////////////////
 
 // middleware:
 // you have to use function instead of ()=> for this.?
+// for every save method
 // encrypt password
 userSchema.pre("save", async function(next) {
   if (!this.isModified("password")) return next();
@@ -63,7 +68,7 @@ userSchema.pre("save", async function(next) {
   next();
 });
 
-// assign value to passwordChangedAt:
+// for every save method: assign value to passwordChangedAt:
 userSchema.pre("save", function(next) {
   if (!this.isModified("password") || this.isNew) return next();
 
@@ -71,6 +76,14 @@ userSchema.pre("save", function(next) {
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
+
+// for every method start find rege, execute:
+userSchema.pre(/^find/,function(next){
+  // don't use active: true because some of the user don't have it set
+  this.find({active:{$ne:false}})
+  next()
+})
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 // instance method based on mongoose userSchema to check user input plain password with encrypted password
@@ -116,6 +129,8 @@ userSchema.methods.passwordReset = async function() {
   // send plain token to user for later compare encrypted
   return resetToken;
 };
+
+
 
 const userModel = mongoose.model("User", userSchema);
 

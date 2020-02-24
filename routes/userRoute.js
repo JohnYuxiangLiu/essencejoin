@@ -8,26 +8,34 @@ var authController = require("../controllers/authController");
 // singup
 app.route("/signup").post(authController.signup);
 // signin
-app.route("/signin").post(authController.signin)
+app.route("/signin").post(authController.signin);
 // forgot password post email
-app.route("/forgotPassword").post(authController.forgotPassword)
+app.route("/forgotPassword").post(authController.forgotPassword);
 // reset password get token
-app.route("/resetPassword/:token").patch(authController.resetPassword)
+app.route("/resetPassword/:token").patch(authController.resetPassword);
 // update password after sign in
-app.route("/updatePassword").patch(authController.authSignin,authController.updatePassword)
-// update user details
-app.route("/updateUser").patch(authController.authSignin,authController.updateUser)
-
+app
+  .route("/updatePassword")
+  .patch(authController.authSignin, authController.updatePassword);
 
 //   user
 app
   .route("/")
   .post(userController.createUser)
-  .get(userController.getUser);
+  .get(authController.authSignin,userController.getUser);
 
 app
   .route("/:id")
   .get(userController.getUserId)
   .patch(userController.updateUserId);
+
+// update user details
+app
+  .route("/updateUser")
+  .patch(authController.authSignin, userController.updateUser);
+// delete user: set it to inactive
+app
+  .route("/deleteUser")
+  .delete(authController.authSignin, userController.deleteUser);
 
 module.exports = app;
