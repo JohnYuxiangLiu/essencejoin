@@ -4,6 +4,12 @@ const bodyParser = require("body-parser");
 const cookieParser=require('cookie-parser')
 // express-rate-limit can only be install to local not global
 const expressRateLimit=require('express-rate-limit')
+// helmet
+const helmet=require('helmet')
+// expressMongoSanitize
+const expressMongoSanitize=require('express-mongo-sanitize')
+// xss-clean
+const xssClean=require('xss-clean')
 
 var activityRoute=require('./routes/activityRoute')
 var userRoute=require('./routes/userRoute')
@@ -34,6 +40,14 @@ app.use(expressRateLimit({
   // 100 attemps to query, after that will show Too many requests, please try again later. 
   max:100,
 }))
+// helmet:
+app.use(helmet())
+// expressMongoSanitize: e.g. remove $ char when using "email":{"$gt":""} to signin
+app.use(expressMongoSanitize())
+// xss clean: insert html with js code attached to attack
+// convert "username": "<div id='bad'>name</div>" to "username": "&lt;div id='bad'>name&lt;/div>",
+app.use(xssClean())
+
 
 //////////////////////////////////////////////////////
 
