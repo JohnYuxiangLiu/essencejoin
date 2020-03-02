@@ -50,7 +50,12 @@ const userSchema = new mongoose.Schema({
   active:{
     type:Boolean,
     default:true,
-  }
+  },
+  activity:[{
+    type:mongoose.Schema.ObjectId,
+    ref:'Activity',
+  }],
+
 });
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -81,6 +86,15 @@ userSchema.pre("save", function(next) {
 userSchema.pre(/^find/,function(next){
   // don't use active: true because some of the user don't have it set
   this.find({active:{$ne:false}})
+  next()
+})
+
+// populate child referencing from id, for all the word starts find method:
+userSchema.pre(/^find/,function(next){
+  // this points to current query
+  this.populate({
+    path:'activity',
+  })
   next()
 })
 
