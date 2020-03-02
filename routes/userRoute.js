@@ -24,15 +24,17 @@ app
   .post(userController.createUser)
   .get(authController.authSignin,userController.getUser);
 
-app
-  .route("/:id")
-  .get(userController.getUserId)
-  .patch(userController.updateUserId);
+// don't enable: Check your routes. It might be that two routes have the same starting point example "#GET /user/:userID and #GET /user/list". The route will use "list" as an input to the database and will give some error. – Jose Hernandez Jan 26 at 23:26
+// app
+//   .route("/:id")
+//   .get(userController.getUserId)
+//   .patch(userController.updateUserId);
 
 // update user details
 app
   .route("/updateUser")
   .patch(authController.authSignin, userController.updateUser);
+    
 // delete user: set it to inactive
 app
   .route("/deleteUser")

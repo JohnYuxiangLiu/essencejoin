@@ -3,7 +3,7 @@ const errorGlobal = require("../utils/errorGlobal");
 
 // functions
 // filter only allowed fileds to be updated:
-// ...: break down an obj
+// ...: break down an obj array
 const filterObj = (objs, ...allowedFields) => {
   const newObj = {};
   // loop through objects' keys as arrays, e.g. age,name,email...
@@ -39,6 +39,7 @@ exports.createUser = async (req, res, next) => {
     next(err);
   }
 };
+////////////////////////////////////////////////////////////////////////////////
 
 exports.getUser = async (req, res) => {
   try {
@@ -55,6 +56,7 @@ exports.getUser = async (req, res) => {
     });
   }
 };
+////////////////////////////////////////////////////////////////////////////////
 
 // /:id
 exports.getUserId = async (req, res, next) => {
@@ -69,22 +71,25 @@ exports.getUserId = async (req, res, next) => {
     next(err);
   }
 };
-exports.updateUserId = async (req, res, next) => {
-  try {
-    var updateUserId = await userModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { runValidators: true }
-    );
+///////////////////////////////////////////////////////////////////////////////
 
-    res.json({
-      status: "success",
-      data: updateUserId
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+// route user/:id disabled, can't coexist with user/updateUser
+// exports.updateUserId = async (req, res, next) => {
+//   try {
+//     var updateUserId = await userModel.findByIdAndUpdate(
+//       req.params.id,
+//       req.body,
+//       { runValidators: true }
+//     );
+
+//     res.json({
+//       status: "success",
+//       data: updateUserId
+//     });
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 ///////////////////////////////////////////////////////////////////////////////
 
 // update user details
@@ -92,17 +97,18 @@ exports.updateUser = async (req, res, next) => {
   try {
     // only name and email are allowed to be updated in req.body
     // filteredBody return a object containing multi objs
-    var filteredBody = filterObj(req.body, "name", "email");
-
+    var filteredBody = filterObj(req.body, "username", "email", "activity");
+    
     // new: return new modified doc, runValidators: validate email add etc.,
     // don't use user.save() here because it will run the passwordConfirm validator which passwordConfirm will be mandatory field
     // filteredBody is objects
+
     const updatedUser = await userModel.findByIdAndUpdate(
       req.user._id,
       filteredBody,
       { new: true, runValidators: true }
     );
-
+    
     res.status(200).json({
       status: "success",
       data: {
@@ -127,10 +133,12 @@ exports.deleteUser = async (req, res, next) => {
     // in postman has to use 200, if use 204 will return no content
     res.status(200).json({
       status: "success",
-      data: null,
+      data: null
     });
   } catch (err) {
     return next(err);
   }
 };
 ////////////////////////////////////////////////////////////////////////////
+
+

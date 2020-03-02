@@ -86,7 +86,7 @@ exports.signin = async (req, res, next) => {
         stack: new Error().stack
       });
     }
-
+    
     createSendToken(user, 200, res);
   } catch (err) {
     // move to next with err
@@ -106,7 +106,7 @@ exports.authSignin = async (req, res, next) => {
     let token;
     if (
       req.headers.authorisation &&
-      req.headers.authorisation.startsWith("bearer")
+      req.headers.authorisation.startsWith("Bearer")
     ) {
       token = req.headers.authorisation.split(" ")[1];
     }
@@ -135,6 +135,7 @@ exports.authSignin = async (req, res, next) => {
 
     // pass user to req.user for future use
     req.user = currentUser;
+    
     // passed auth, next to get data
     next();
   } catch (err) {
