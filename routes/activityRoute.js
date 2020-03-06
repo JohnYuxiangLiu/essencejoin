@@ -5,11 +5,13 @@ var authController = require("../controllers/authController");
 
 //   activity
 app.route("/").get(authController.authSignin, activityController.getActivity);
+
 app
   .route("/:id")
   .get(
-    authController.authSignin,
-    authController.authorisation("admin"), //only admin can perform certain actions
+    // authController.authSignin,
+    // authController.authorisation("admin"), //only admin can perform certain actions
+    activityController.getActivityId,
     activityController.deleteActivity,
   );
 

@@ -97,7 +97,7 @@ exports.updateUser = async (req, res, next) => {
   try {
     // only name and email are allowed to be updated in req.body
     // filteredBody return a object containing multi objs
-    var filteredBody = filterObj(req.body, "username", "email", "activity");
+    var filteredBody = filterObj(req.body, "username", "email", "userActivity");
     
     // new: return new modified doc, runValidators: validate email add etc.,
     // don't use user.save() here because it will run the passwordConfirm validator which passwordConfirm will be mandatory field

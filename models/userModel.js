@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema({
     type:Boolean,
     default:true,
   },
+  // parent referencing: store parent's ObjectId in child user model. parent activity can have more children users
   activity:[{
     type:mongoose.Schema.ObjectId,
     ref:'Activity',
@@ -89,7 +90,7 @@ userSchema.pre(/^find/,function(next){
   next()
 })
 
-// populate child referencing from id, for all the word starts find method:
+// populate parent referencing from id, for all the word starts find method:
 userSchema.pre(/^find/,function(next){
   // this points to current query
   this.populate({

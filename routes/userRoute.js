@@ -22,7 +22,8 @@ app
 app
   .route("/")
   .post(userController.createUser)
-  .get(authController.authSignin,userController.getUser);
+  // .get(authController.authSignin,userController.getUser);
+  .get(userController.getUser);
 
 // don't enable: Check your routes. It might be that two routes have the same starting point example "#GET /user/:userID and #GET /user/list". The route will use "list" as an input to the database and will give some error. – Jose Hernandez Jan 26 at 23:26
 // app
