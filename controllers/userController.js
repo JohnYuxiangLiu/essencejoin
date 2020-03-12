@@ -1,5 +1,6 @@
 const userModel = require("../models/userModel");
 const errorGlobal = require("../utils/errorGlobal");
+const crudFunction=require('./crudFunction')
 
 // functions
 // filter only allowed fileds to be updated:
@@ -121,7 +122,12 @@ exports.updateUser = async (req, res, next) => {
 };
 ///////////////////////////////////////////////////////////////////////////////
 
-exports.deleteUser = async (req, res, next) => {
+// signed in user delete itself
+exports.deleteUser=crudFunction.deleteOne(userModel)
+////////////////////////////////////////////////////////////////////////////////
+
+// admin delete user by id
+exports.deleteUserId = async (req, res, next) => {
   try {
     const user = await userModel.findByIdAndUpdate(req.user._id, {
       active: false

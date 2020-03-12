@@ -39,6 +39,7 @@ app
 // delete user: set it to inactive
 app
   .route("/deleteUser")
-  .delete(authController.authSignin, userController.deleteUser);
+  .delete(authController.authSignin, userController.deleteUser)
+  
 
 module.exports = app;
