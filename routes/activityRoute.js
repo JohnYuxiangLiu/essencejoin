@@ -11,8 +11,8 @@ app
   .get(
     // authController.authSignin,
     // authController.authorisation("admin"), //only admin can perform certain actions
-    activityController.getActivityId,
-    activityController.deleteActivity,
-  );
+    activityController.getActivityId
+  )
+  .delete(activityController.deleteActivity);
 
 module.exports = app;
