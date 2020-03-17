@@ -15,4 +15,8 @@ app
   )
   .delete(activityController.deleteActivity);
 
+app
+  .route("/activityDistance/:distance/center/:latlng/unit/:unit")
+  .get(activityController.getActivityDistance);
+
 module.exports = app;

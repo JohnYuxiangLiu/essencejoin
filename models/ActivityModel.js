@@ -9,8 +9,21 @@ const activitySchema = new mongoose.Schema({
   users:[{
     type: mongoose.Schema.ObjectId,
     ref: "User",
-  }]
+  }],
+  locations: 
+    {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point']
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+      day: Number
+    },
 },
+
   {
     toJSON: {virtuals: true},
     toObject: {virtuals: true},
@@ -18,6 +31,11 @@ const activitySchema = new mongoose.Schema({
 );
 ///////////////////////////////////////////////////////////////////////////////
 
+// indexing
+// geo sphere index must put here to make geoSpatial func work
+activitySchema.index({locations:'2dsphere'})
+
+/////////////////////////////////////////////////////////////////////////////////
 // virtuals populate: will not store in db, only show data when query
 activitySchema.virtual("user",{
   ref: "User",
