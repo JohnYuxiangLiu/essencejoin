@@ -28,7 +28,7 @@ exports.deleteActivity = crudFunction.deleteOne(activityModel);
 // within certain radius to find how many activities
 exports.getActivityDistance = async (req, res, next) => {
   // activityDistance/:distance/center/:latlon/unit/:unit
-  // http://localhost:3000/activity/activityDistance/5000/center/-74.526716,27.835688/unit/mi
+  // http://localhost:3000/activity/activityDistance/5000/center/37.7840242,-122.4316821/unit/mi
   const { distance, latlng, unit } = req.params;
   const [lat, lng] = latlng.split(",");
   const radius = unit === "mi" ? distance / 3963.2 : distance / 6378.1;
