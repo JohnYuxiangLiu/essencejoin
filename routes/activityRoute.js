@@ -18,5 +18,10 @@ app
 app
   .route("/activityDistance/:distance/center/:latlng/unit/:unit")
   .get(activityController.getActivityDistance);
+  
+app
+.route("/activityNearDistance/:latlng/unit/:unit")
+.get(activityController.getActivityNearDistance);
+
 
 module.exports = app;
