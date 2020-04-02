@@ -68,8 +68,8 @@ app.route("/").get((req, res) => {
 app.route("/signin").get((req, res) => {
   res.sendFile(path.resolve(__dirname, "pages/user/signin.html"));
 });
-app.use('/user',userRoute)
-app.use('/activity',activityRoute)
+app.use('/api/user',userRoute)
+app.use('/api/activity',activityRoute)
 
 // error
 // error route: error msg for all other routes unspecified
