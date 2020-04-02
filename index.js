@@ -21,7 +21,15 @@ var errorController=require('./controllers/errorController')
 const app = new express();
 ////////////////////////////////////////////////////////////////
 
-// use
+// set
+// set pug template engine
+app.set('view engine','pug')
+// use path __dirname join to avoid path passed from without /
+app.set('views',path.join(__dirname,'views'))
+
+/////////////////////////////////////////////////////////////////
+
+// use: setup
 // static files
 app.use(express.static("public")); //static files except html
 // bodyparser
@@ -63,8 +71,12 @@ app.use((req,res,next)=>{
 
 // route
 app.route("/").get((req, res) => {
-  res.sendFile(path.resolve(__dirname, "pages/index.html"));
+  res.status(200).render('base')
 });
+// or
+// app.get('/',(req,res)=>{
+//   res.status(200).render('base')
+// })
 app.route("/signin").get((req, res) => {
   res.sendFile(path.resolve(__dirname, "pages/user/signin.html"));
 });
