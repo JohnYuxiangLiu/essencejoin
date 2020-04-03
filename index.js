@@ -71,7 +71,10 @@ app.use((req,res,next)=>{
 
 // route
 app.route("/").get((req, res) => {
-  res.status(200).render('base')
+  res.status(200).render('base',{
+    user:'user mongodb',
+    activity:'activity mongodb'
+  })
 });
 // or
 // app.get('/',(req,res)=>{
