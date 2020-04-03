@@ -70,19 +70,28 @@ app.use((req,res,next)=>{
 ////////////////////////////////////////////////////////
 
 // route
-app.route("/").get((req, res) => {
-  res.status(200).render('base',{
-    user:'user mongodb',
-    activity:'activity mongodb'
-  })
-});
+// view route
 // or
 // app.get('/',(req,res)=>{
 //   res.status(200).render('base')
 // })
-app.route("/signin").get((req, res) => {
-  res.sendFile(path.resolve(__dirname, "pages/user/signin.html"));
+app.route("/").get((req, res) => {
+  res.status(200).render('base',{
+    user:'user data',
+    activity:'activity data'
+  })
 });
+app.route('/overview').get((req,res)=>{
+  res.status(200).render('overview',{
+    data:'overview data'
+  })
+})
+app.route('/activity').get((req,res)=>{
+  res.status(200).render('activity',{
+    data:'activity data'
+  })
+})
+// api route
 app.use('/api/user',userRoute)
 app.use('/api/activity',activityRoute)
 

@@ -1,12 +1,16 @@
 doctype html
 html
-    head
-        title EssenceJoin
-        //- favicon
-        link(rel='shortcut icon',type='image/ico',href='img/favicon.ico')
-        link(rel='stylesheet',href='css/style.css')
+    //- body
     body
-        h1=activity
-        p All Activities
+        //- header
+        include _header
 
-        
+        //- content
+        //- block content is an extension of other files
+        block content
+            h1 content
+
+        //- footer
+        include _footer
+
+
