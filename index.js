@@ -11,6 +11,7 @@ const expressMongoSanitize=require('express-mongo-sanitize')
 // xss-clean
 const xssClean=require('xss-clean')
 
+var viewRoute=require('./routes/viewRoute')
 var activityRoute=require('./routes/activityRoute')
 var userRoute=require('./routes/userRoute')
 var errorGlobal=require('./utils/errorGlobal')
@@ -71,26 +72,7 @@ app.use((req,res,next)=>{
 
 // route
 // view route
-// or
-// app.get('/',(req,res)=>{
-//   res.status(200).render('base')
-// })
-app.route("/").get((req, res) => {
-  res.status(200).render('base',{
-    user:'user data',
-    activity:'activity data'
-  })
-});
-app.route('/overview').get((req,res)=>{
-  res.status(200).render('overview',{
-    data:'overview data'
-  })
-})
-app.route('/activity').get((req,res)=>{
-  res.status(200).render('activity',{
-    data:'activity data'
-  })
-})
+app.use('/',viewRoute)
 // api route
 app.use('/api/user',userRoute)
 app.use('/api/activity',activityRoute)
