@@ -1,6 +1,19 @@
 extends home
 
 block content
-    h1 overview page
+    h1 Activity Overview
 
-    
+    table
+        tr
+            th Date
+            th Location
+            th Activity
+        //- loop through number of activities
+        each activity in activities
+            tr
+                td Alfreds Futterkiste
+                td Maria Anders
+                td=activity.activityName
+
+
+
