@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const activitySchema = new mongoose.Schema({
-  created:{type:Date,default:Date.now()},
+  createTime:{type:Date,default:Date.now()},
   activityName: {
     type: String,
     unique: true,
@@ -20,6 +20,7 @@ const activitySchema = new mongoose.Schema({
         enum: ['Point']
       },
       coordinates: [Number],
+      location: String,
       // address: String,
       // description: String,
       // day: Number

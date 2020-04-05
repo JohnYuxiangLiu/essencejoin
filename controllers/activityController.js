@@ -28,6 +28,7 @@ exports.createActivity = async (req, res, next) => {
       locations:{
         // type:"Point",
         coordinates:req.body.coordinates,
+        location: req.body.location,
       },
 
     });

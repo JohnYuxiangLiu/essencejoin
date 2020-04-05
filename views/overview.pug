@@ -5,14 +5,14 @@ block content
 
     table
         tr
-            th Date
+            th Created
             th Location
             th Activity
         //- loop through number of activities
         each activity in activities
             tr
-                td Alfreds Futterkiste
-                td Maria Anders
+                td=activity.createTime.toLocaleString('en',{weekday:'short', day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'})
+                td=activity.locations.location
                 td=activity.activityName
 
 
