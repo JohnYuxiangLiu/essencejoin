@@ -20,6 +20,27 @@ exports.getActivity = async (req, res) => {
 };
 /////////////////////////////////////////////////////////////////////////////////
 
+// create activity
+exports.createActivity = async (req, res, next) => {
+  try {
+    var createActivity = await activityModel.create({
+      activityName: req.body.activityName,
+      locations:{
+        // type:"Point",
+        coordinates:req.body.coordinates,
+      },
+
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: createActivity
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // get 1 activity by id
 exports.getActivityId = crudFunction.getOne(activityModel, { path: "user" });
 /////////////////////////////////////////////////////////////////////////////////

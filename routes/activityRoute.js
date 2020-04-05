@@ -4,7 +4,11 @@ var activityController = require("../controllers/activityController");
 var authController = require("../controllers/authController");
 
 //   activity
-app.route("/").get(authController.authSignin, activityController.getActivity);
+// app.route("/").get(authController.authSignin, activityController.getActivity);
+app
+  .route("/")
+  .get(activityController.getActivity)
+  .post(activityController.createActivity);
 
 app
   .route("/:id")
@@ -18,10 +22,9 @@ app
 app
   .route("/activityDistance/:distance/center/:latlng/unit/:unit")
   .get(activityController.getActivityDistance);
-  
-app
-.route("/activityNearDistance/:latlng/unit/:unit")
-.get(activityController.getActivityNearDistance);
 
+app
+  .route("/activityNearDistance/:latlng/unit/:unit")
+  .get(activityController.getActivityNearDistance);
 
 module.exports = app;
