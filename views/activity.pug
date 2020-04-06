@@ -1,4 +1,8 @@
 extends home
 
 block content
-    h1 activity page
+    h1 Activity
+    h2 Activity Name: #{activityId.activityName}
+    h2 Location: #{activityId.locations.location}
+    h2 Users
+        h3 Organiser: #{activityId.user[0].username}

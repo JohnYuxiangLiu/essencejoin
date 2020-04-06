@@ -11,7 +11,7 @@ const activitySchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "User",
   }],
-  // in compass analysising location is not available in community version
+  // in compass analysising location is not available in community version, in beta version
   locations: 
     {
       type: {

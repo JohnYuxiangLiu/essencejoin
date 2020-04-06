@@ -10,5 +10,6 @@ const viewController=require('../controllers/viewController')
 router.get("/",viewController.getOverview)
 
 router.get("/activity",viewController.getActivity)
+router.get('/activity/:id',viewController.getActivityId)
 
 module.exports = router;

@@ -13,7 +13,8 @@ block content
             tr
                 td=activity.createTime.toLocaleString('en',{weekday:'short', day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'})
                 td=activity.locations.location
-                td=activity.activityName
+                td 
+                    a(href=`/activity/${activity._id}`) #{activity.activityName}
 
 
 
